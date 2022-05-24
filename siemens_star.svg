@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
+	"http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+ version="1.1" baseProfile="full"
+ width="600" height="600"
+ viewBox="0 0 20000 20000">
+    <path d="M10000,10000 L10000,0 A10000,10000 0 0,1 11951,192 z" style="fill:black;"/>
+    <path d="M10000,10000 L13827,761 A10000,10000 0 0,1 15556,1685 z" style="fill:black;"/>
+    <path d="M10000,10000 L17071,2929 A10000,10000 0 0,1 18315,4444 z" style="fill:black;"/>
+    <path d="M10000,10000 L19239,6173 A10000,10000 0 0,1 19808,8049 z" style="fill:black;"/>
+    <path d="M10000,10000 L20000,10000 A10000,10000 0 0,1 19808,11951 z" style="fill:black;"/>
+    <path d="M10000,10000 L19239,13827 A10000,10000 0 0,1 18315,15556 z" style="fill:black;"/>
+    <path d="M10000,10000 L17071,17071 A10000,10000 0 0,1 15556,18315 z" style="fill:black;"/>
+    <path d="M10000,10000 L13827,19239 A10000,10000 0 0,1 11951,19808 z" style="fill:black;"/>
+    <path d="M10000,10000 L10000,20000 A10000,10000 0 0,1 8049,19808 z" style="fill:black;"/>
+    <path d="M10000,10000 L6173,19239 A10000,10000 0 0,1 4444,18315 z" style="fill:black;"/>
+    <path d="M10000,10000 L2929,17071 A10000,10000 0 0,1 1685,15556 z" style="fill:black;"/>
+    <path d="M10000,10000 L761,13827 A10000,10000 0 0,1 192,11951 z" style="fill:black;"/>
+    <path d="M10000,10000 L0,10000 A10000,10000 0 0,1 192,8049 z" style="fill:black;"/>
+    <path d="M10000,10000 L761,6173 A10000,10000 0 0,1 1685,4444 z" style="fill:black;"/>
+    <path d="M10000,10000 L2929,2929 A10000,10000 0 0,1 4444,1685 z" style="fill:black;"/>
+    <path d="M10000,10000 L6173,761 A10000,10000 0 0,1 8049,192 z" style="fill:black;"/>
+</svg>
+

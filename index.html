@@ -1,0 +1,83 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Rolling Shutter Calibration</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+    html,body{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        text-align: center;
+    }
+    img{
+        height: 95%;
+    }
+    #tools{
+        float: left;
+        background: white;
+        margin-left: 12px;
+    }
+    </style>
+</head>
+
+<body>
+<div id="tools">
+    <input type="button" value="Start/Stop" onclick="startStop()" /><br/><br/>
+    <strong>RPMs:</strong> <input id="rpms" type="number" step="1" onclick="changeRpms(this)" oninput="changeRpms(this)" value="180" style="width: 3em;">
+</div>
+
+<img id="wheel" src="/siemens_star.svg" alt="" />
+
+<script>
+var wheel = document.getElementById("wheel");
+var fpsInterval, startTime, now, then, elapsed;
+var rpms = 0;
+var degrees = 0;
+var deltaDeg = 0;
+
+function startStop(){
+    if (rpms === 0) setRPMs(parseInt(document.getElementById("rpms").value));
+    else setRPMs(0);
+}
+
+function changeRpms(el){
+    setRPMs(parseInt(el.value));
+}
+
+function setRPMs(rs){
+    if (typeof rs !== "number" || isNaN(rs)) return;
+
+    fpsInterval = 1000 / 60;
+    rpms = rs;
+    deltaDeg = ((rpms / 60) * 360) * (1 / 60);
+    then = Date.now();
+    startTime = then;
+    animateWheel();
+}
+
+function animateWheel(){
+    if (rpms === 0) return;
+    
+    requestAnimationFrame(animateWheel);
+
+    now = Date.now();
+    elapsed = now - then;
+
+    if (elapsed > fpsInterval) {
+        then = now - (elapsed % fpsInterval);
+
+        wheel.style.transform = "rotate(" + (-degrees) + "deg)";
+        degrees = (degrees + deltaDeg) % 360;
+    }
+}
+
+</script>
+</body>
+
+</html>
