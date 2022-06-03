@@ -24,6 +24,7 @@
         margin-left: 12px;
     }
     </style>
+    <script src="gl-matrix-min.js"></script>
 </head>
 
 <body>
@@ -32,14 +33,16 @@
     <strong>RPMs:</strong> <input id="rpms" type="number" step="1" onclick="changeRpms(this)" oninput="changeRpms(this)" value="180" style="width: 3em;">
 </div>
 
-<img id="wheel" src="/siemens_star.svg" alt="" />
+<!-- <img id="wheel" src="/siemens_star.svg" alt="" /> -->
+<canvas id="glCanvas" width="640" height="480"></canvas>
 
 <script>
 var wheel = document.getElementById("wheel");
 var fpsInterval, startTime, now, then, elapsed;
 var rpms = 0;
-var degrees = 0;
-var deltaDeg = 0;
+var radians = Math.PI / 4; //0;
+var deltaRad = 0;
+var tPi = Math.PI * 2;
 
 function startStop(){
     if (rpms === 0) setRPMs(parseInt(document.getElementById("rpms").value));
@@ -55,27 +58,338 @@ function setRPMs(rs){
 
     fpsInterval = 1000 / 60;
     rpms = rs;
-    deltaDeg = ((rpms / 60) * 360) * (1 / 60);
+    deltaRad = ((rpms / 60) * tPi) * (1 / 60);
     then = Date.now();
     startTime = then;
-    animateWheel();
 }
 
-function animateWheel(){
-    if (rpms === 0) return;
-    
-    requestAnimationFrame(animateWheel);
+var vsSource = [
+    "attribute vec4 aVertexPosition;",
+    "attribute vec2 aTextureCoord;",
 
-    now = Date.now();
-    elapsed = now - then;
+    "uniform mat4 uModelViewMatrix;",
+    "uniform mat4 uProjectionMatrix;",
 
-    if (elapsed > fpsInterval) {
-        then = now - (elapsed % fpsInterval);
+    "varying highp vec2 vTextureCoord;",
 
-        wheel.style.transform = "rotate(" + (-degrees) + "deg)";
-        degrees = (degrees + deltaDeg) % 360;
+    "void main() {",
+    "  gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;",
+    "  vTextureCoord = aTextureCoord;",
+    "}"
+].join("\n");
+
+var fsSource = [
+    "varying highp vec2 vTextureCoord;",
+    "uniform sampler2D uSampler;",
+
+    "void main() {",
+    // "  gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);",
+    "  gl_FragColor = texture2D(uSampler, vTextureCoord);",
+    "}"
+].join("\n");
+
+function initShaderProgram(gl, vsSource, fsSource) {
+  var vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+  var fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+  // Create the shader program
+
+  var shaderProgram = gl.createProgram();
+  gl.attachShader(shaderProgram, vertexShader);
+  gl.attachShader(shaderProgram, fragmentShader);
+  gl.linkProgram(shaderProgram);
+
+  // If creating the shader program failed, alert
+
+  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+    alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
+    return null;
+  }
+
+  return shaderProgram;
+}
+
+function loadShader(gl, type, source) {
+  var shader = gl.createShader(type);
+
+  // Send the source to the shader object
+
+  gl.shaderSource(shader, source);
+
+  // Compile the shader program
+
+  gl.compileShader(shader);
+
+  // See if it compiled successfully
+
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
+    return null;
+  }
+
+  return shader;
+}
+
+function initBuffers(gl) {
+    // Create a buffer for the square's positions.
+
+    var positionBuffer = gl.createBuffer();
+
+    // Select the positionBuffer as the one to apply buffer
+    // operations to from here out.
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+    // Now create an array of positions for the square.
+
+    var positions = [
+        1.0,  1.0,
+        -1.0,  1.0,
+        1.0, -1.0,
+        -1.0, -1.0,
+    ];
+
+    // Now pass the list of positions into WebGL to build the
+    // shape. We do this by creating a Float32Array from the
+    // JavaScript array, then use it to fill the current buffer.
+
+    gl.bufferData(gl.ARRAY_BUFFER,
+                new Float32Array(positions),
+                gl.STATIC_DRAW);
+
+
+    var textureCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
+
+    const textureCoordinates = [
+        // Front
+        0.0, 0.0,
+        0.0, 1.0,
+        1.0, 0.0,
+        1.0, 1.0
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
+                gl.STATIC_DRAW);
+
+
+    return {
+        position: positionBuffer,
+        textureCoord: textureCoordBuffer
+    };
+}
+
+var mat4 = glMatrix.mat4;
+var vec3 = glMatrix.vec3;
+
+
+function drawScene(gl, programInfo, buffers, texture) {
+  gl.clearColor(1.0, 1.0, 1.0, 1.0);  // Clear to white, fully opaque
+  gl.clearDepth(1.0);                 // Clear everything
+//   gl.enable(gl.DEPTH_TEST);           // Enable depth testing
+//   gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
+
+  // Clear the canvas before we start drawing on it.
+
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  // Tell WebGL we want to affect texture unit 0
+  gl.activeTexture(gl.TEXTURE0);
+
+  // Bind the texture to texture unit 0
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // Tell the shader we bound the texture to texture unit 0
+  gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
+
+  // Create a perspective matrix, a special matrix that is
+  // used to simulate the distortion of perspective in a camera.
+  // Our field of view is 45 degrees, with a width/height
+  // ratio that matches the display size of the canvas
+  // and we only want to see objects between 0.1 units
+  // and 100 units away from the camera.
+
+  var fieldOfView = 45 * Math.PI / 180;   // in radians
+  var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+  var zNear = 0.1;
+  var zFar = 100.0;
+  var projectionMatrix = mat4.create();
+
+  // note: glmatrix.js always has the first argument
+  // as the destination to receive the result.
+  mat4.perspective(projectionMatrix,
+                   fieldOfView,
+                   aspect,
+                   zNear,
+                   zFar);
+
+  // Set the drawing position to the "identity" point, which is
+  // the center of the scene.
+  var modelViewMatrix = mat4.create();
+
+  // Now move the drawing position a bit to where we want to
+  // start drawing the square.
+
+  mat4.translate(modelViewMatrix,     // destination matrix
+                 modelViewMatrix,     // matrix to translate
+                 [-0.0, 0.0, -2.5]);  // amount to translate
+  mat4.rotateZ(modelViewMatrix, modelViewMatrix, radians);
+
+  // Tell WebGL how to pull out the positions from the position
+  // buffer into the vertexPosition attribute.
+  {
+    var numComponents = 2;  // pull out 2 values per iteration
+    var type = gl.FLOAT;    // the data in the buffer is 32bit floats
+    var normalize = false;  // don't normalize
+    var stride = 0;         // how many bytes to get from one set of values to the next
+                              // 0 = use type and numComponents above
+    var offset = 0;         // how many bytes inside the buffer to start from
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+    gl.vertexAttribPointer(
+        programInfo.attribLocations.vertexPosition,
+        numComponents,
+        type,
+        normalize,
+        stride,
+        offset);
+    gl.enableVertexAttribArray(
+        programInfo.attribLocations.vertexPosition);
+  }
+  // tell webgl how to pull out the texture coordinates from buffer
+  {
+    const num = 2; // every coordinate composed of 2 values
+    const type = gl.FLOAT; // the data in the buffer is 32-bit float
+    const normalize = false; // don't normalize
+    const stride = 0; // how many bytes to get from one set to the next
+    const offset = 0; // how many bytes inside the buffer to start from
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.textureCoord);
+    gl.vertexAttribPointer(programInfo.attribLocations.textureCoord, num, type, normalize, stride, offset);
+    gl.enableVertexAttribArray(programInfo.attribLocations.textureCoord);
+  }
+
+  // Tell WebGL to use our program when drawing
+
+  gl.useProgram(programInfo.program);
+
+  // Set the shader uniforms
+
+  gl.uniformMatrix4fv(
+      programInfo.uniformLocations.projectionMatrix,
+      false,
+      projectionMatrix);
+  gl.uniformMatrix4fv(
+      programInfo.uniformLocations.modelViewMatrix,
+      false,
+      modelViewMatrix);
+
+  {
+    var offset = 0;
+    var vertexCount = 4;
+    gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
+  }
+}
+
+function loadTexture(gl, url) {
+  var texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // Because images have to be downloaded over the internet
+  // they might take a moment until they are ready.
+  // Until then put a single pixel in the texture so we can
+  // use it immediately. When the image has finished downloading
+  // we'll update the texture with the contents of the image.
+  var level = 0;
+  var internalFormat = gl.RGBA;
+  var width = 1;
+  var height = 1;
+  var border = 0;
+  var srcFormat = gl.RGBA;
+  var srcType = gl.UNSIGNED_BYTE;
+  var pixel = new Uint8Array([0, 0, 255, 255]);  // opaque blue
+  gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
+                width, height, border, srcFormat, srcType,
+                pixel);
+
+  var image = new Image();
+  image.onload = function() {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
+                  srcFormat, srcType, image);
+
+    // WebGL1 has different requirements for power of 2 images
+    // vs non power of 2 images so check if the image is a
+    // power of 2 in both dimensions.
+    if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+       // Yes, it's a power of 2. Generate mips.
+       gl.generateMipmap(gl.TEXTURE_2D);
+    } else {
+       // No, it's not a power of 2. Turn off mips and set
+       // wrapping to clamp to edge
+       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     }
+  };
+  image.src = url;
+
+  return texture;
 }
+
+function isPowerOf2(value) {
+  return (value & (value - 1)) == 0;
+}
+
+function main(){
+    var canvas = document.getElementById("glCanvas");
+    gl = canvas.getContext("webgl");
+    if (gl === null) {
+        alert("Unable to initialize WebGL. Your browser or machine may not support it.");
+        return;
+    }
+
+    var shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+
+    var programInfo = {
+        program: shaderProgram,
+        attribLocations: {
+            vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+            textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord')
+        },
+        uniformLocations: {
+            projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+            modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+            uSampler: gl.getUniformLocation(shaderProgram, 'uSampler')
+        },
+    };
+
+    var buffers = initBuffers(gl);
+    var texture = loadTexture(gl, "siemens_star.png");
+
+    function loop(){
+        if (rpms === 0){
+            requestAnimationFrame(loop);
+            return;
+        }
+        
+        now = Date.now();
+        elapsed = now - then;
+
+        if (elapsed > fpsInterval) {
+            then = now - (elapsed % fpsInterval);
+
+            // wheel.style.transform = "rotate(" + (-degrees) + "deg)";
+            radians = (radians + deltaRad) % tPi;
+            drawScene(gl, programInfo, buffers, texture);
+        }
+
+        requestAnimationFrame(loop);
+    }
+
+    loop();
+
+}
+
+window.onload = main;
 
 </script>
 </body>
