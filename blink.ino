@@ -1,6 +1,6 @@
 const int ledPin =  7;// the number of the LED pin
 int ledState = LOW;             // ledState used to set the LED
-unsigned long previousMillis = 0;        // will store last time LED was updated
+unsigned long previous = 0;        // will store last time LED was updated
 const long interval = 1000;           // interval at which to blink (microseconds)
 
 void setup() {
@@ -8,10 +8,10 @@ void setup() {
 }
 
 void loop() {
-  unsigned long currentMillis = micros();
+  unsigned long current = micros();
 
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
+  if (current - previous >= interval) {
+    previous = current;
 
     if (ledState == LOW) {
       ledState = HIGH;
