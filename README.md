@@ -31,6 +31,12 @@ You can upload the following code to the Arduino board and change the `ledPin` v
 
  - [blink.ino](https://github.com/OpenDroneMap/RSCalibration/blob/main/blink.ino)
 
-## Publish your results
+## Procedure
 
-TODO
+1. Turn on the Arduino device
+2. Place the camera on a stable surface close to the LED
+3. Take a picture of the LED using the **fastest shutter speed setting available**
+4. Examine the picture and count the total number of lines (both dark and colored lines). For example, the picture below has ~25 lines and the estimated readout time is thus `25ms`:
+
+![image](https://user-images.githubusercontent.com/1951843/174388401-09e18fee-1975-43fa-8f56-6f5d046fe475.png)
+
