@@ -8,7 +8,7 @@ We present below an inexpensive method to build a calibration device using an Ar
 
 ![image](https://user-images.githubusercontent.com/1951843/174381801-bb0e3c9f-6aa4-43dd-bf72-7c10b16fa231.png)
 
-![image](https://user-images.githubusercontent.com/1951843/174384049-ac5dcfea-db4b-4f8d-b3f2-5263bedd11e9.png)
+![image](https://user-images.githubusercontent.com/1951843/174392415-d2aee736-ed5a-4c93-83ca-0ac3eb5f9425.png)
 
 The idea is to blink an LED at ~2khz, capture a photo using a fast shutter speed and count the number of lines in the result. Each line will represent ~1ms of time, thus the total readout time will be close to: `number of lines ~= readout time (ms)`.
 
@@ -24,7 +24,7 @@ Most of these items can be found on eBay, or electronics retailers like Sparkfun
 
 ## Schematics
 
-![image](https://user-images.githubusercontent.com/1951843/174387902-d1ec32e7-31cf-4460-b311-fc2d58248f85.png)
+![image](https://user-images.githubusercontent.com/1951843/174392464-3da5045b-e83d-4d80-a1fd-efc9d8023ff9.png)
 
 ## Code
 
@@ -39,6 +39,8 @@ You can upload the following code to the Arduino board and change the `ledPin` v
 3. Take a picture of the LED using the **fastest shutter speed setting available**
 4. Examine the picture and count the total number of lines (both dark and colored lines). For example, the picture below has ~25 lines and the estimated readout time is thus `25ms`:
 
-![image](https://user-images.githubusercontent.com/1951843/174388401-09e18fee-1975-43fa-8f56-6f5d046fe475.png)
+![image](https://user-images.githubusercontent.com/1951843/174392533-429943a6-82b2-4948-9637-3cb35fd21707.png)
 
-5. Use the form at https://opendronemap.github.io/RSCalibration/ to contribute to [ODM's database of rolling shutter cameras](https://github.com/OpenDroneMap/ODM/blob/master/opendm/rollingshutter.py).
+## Contribute to ODM
+
+You can use the form at https://opendronemap.github.io/RSCalibration/ to contribute to [ODM's database of rolling shutter cameras](https://github.com/OpenDroneMap/ODM/blob/master/opendm/rollingshutter.py).
