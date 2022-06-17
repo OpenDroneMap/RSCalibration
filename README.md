@@ -4,7 +4,7 @@ This repository documents practical methods to estimate [rolling shutter](https:
 
 Software such as [ODM](https://github.com/OpenDroneMap/ODM) can compensate for the rolling shutter effect when a set of photos is captured in motion, but knowledge of the sensor readout time is necessary to perform this correction.
 
-We present below an inexpensive method to build a calibration device using an Arduino:
+We present below an inexpensive method to build a reader device using an Arduino:
 
 ![image](https://user-images.githubusercontent.com/1951843/174381801-bb0e3c9f-6aa4-43dd-bf72-7c10b16fa231.png)
 
