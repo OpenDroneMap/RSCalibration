@@ -20,6 +20,7 @@ Most of these items can be found on eBay, or electronics retailers like Sparkfun
  - [x] 1x 80Ω (or less) resistor
  - [x] 1x LED
  - [x] 1x breadboard (not strictly required, but makes wiring easier)
+ - [x] 2x 22AWG jump wires (not strictly required, but makes wiring easier)
 
 ## Schematics
 
