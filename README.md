@@ -43,4 +43,4 @@ You can upload the following code to the Arduino board and change the `ledPin` v
 
 ## Contribute to ODM
 
-You can use the form at https://opendronemap.github.io/RSCalibration/ to contribute to [ODM's database of rolling shutter cameras](https://github.com/OpenDroneMap/ODM/blob/master/opendm/rollingshutter.py).
+You can use the form at https://opendronemap.github.io/RSCalibration/ to contribute to [ODM's database of rolling shutter readout times](https://github.com/OpenDroneMap/ODM/blob/master/opendm/rollingshutter.py).
