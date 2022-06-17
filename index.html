@@ -1,0 +1,67 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Make Model Finder</title>
+  <style type="text/css">
+      body{
+          text-align: center;
+          font-size: 120%;
+      }
+      #instructions{
+          display: none;
+          margin-top: 24px;
+      }
+      #instructions.show{
+          display: block;
+      }
+  </style>
+</head>
+
+<body>
+  <script src="exif-js.js"></script>
+  How many lines did you count? <input type="number" id="lines" value="20" min="0" max="9999" /><br/>
+  What's the name of your drone/camera? <input type="text" id="name" value="DJI Mavic Mini v1"/><br/>
+  
+  Select the image: <input id="fileInput" type="file" accept="image/png, image/jpeg">
+  
+  <div id="instructions"><b>Excellent!</b> You can open a <a href="https://github.com/OpenDroneMap/ODM/edit/master/opendm/rollingshutter.py">pull request</a> by adding the following line:</div>
+  <pre id="makeAndModel"></pre>
+  
+  <script>
+      var lastFile = null;
+      var lines = 20;
+      var name = "DJI Mavic Mini v1";
+      document.getElementById("fileInput").addEventListener('change', function(e){
+          lastFile = e.target.files[0];
+          update();
+      });
+
+      document.getElementById("lines").addEventListener('input', function(e){
+        var l = parseInt(e.target.value);
+        if (!isNaN(l)) lines = l;
+        update();
+      });
+
+      document.getElementById("name").addEventListener('input', function(e){
+        name = e.target.value;
+        update();
+      });
+
+      function update(){
+        if (!lastFile) return;
+        EXIF.getData(lastFile, function() {
+              var make = EXIF.getTag(this, "Make");
+              var model = EXIF.getTag(this, "Model");
+              var makeAndModel = document.getElementById("makeAndModel");
+              makeAndModel.innerHTML = "'" + (make + " " + model).toLocaleLowerCase() + "': " + lines + ", # " + name;
+
+              document.getElementById("instructions").classList.add("show");
+          });
+      }
+  </script>
+</body>
+</html>
