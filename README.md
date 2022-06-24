@@ -57,6 +57,17 @@ You will only need to connect your RP2040 board to your computer for programming
 You can upload the following MicroPython code to the RP2040-compatible board using Thonny:  
  - [main.py](https://github.com/OpenDroneMap/RSCalibration/blob/main/main.py)
 
+```
+from machine import Pin, Timer
+led = Pin(25, Pin.OUT)
+timer = Timer()
+
+def blink(timer):
+    led.toggle()
+
+timer.init(freq=1000, mode=Timer.PERIODIC, callback=blink)
+```
+
 ![image](https://user-images.githubusercontent.com/19295950/175456447-7df30e7e-4034-43b4-8cb1-95d51fa1c1a4.png)
 
 1. Plug in your RP2040-compatible board while hoading the Bootsel button. It will show up as a removeable-storage drive
