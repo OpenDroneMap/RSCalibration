@@ -41,6 +41,45 @@ You can upload the following code to the Arduino board and change the `ledPin` v
 
 ![image](https://user-images.githubusercontent.com/1951843/174392533-429943a6-82b2-4948-9637-3cb35fd21707.png)
 
+## No-Tinker Solution
+
+### Required Hardware
+
+ - [x] Raspberry Pi Pico (RP2040)-compatible board
+ ![image](https://user-images.githubusercontent.com/19295950/175455634-6be7e3cd-9abe-4260-8af0-7bab0909fb67.png)
+ 
+### Schematics
+
+You will only need to connect your RP2040 board to your computer for programming using whatever cable/interface your board has (microUSB, Type-C,etc)
+
+### Code
+
+You can upload the following MicroPython code to the RP2040-compatible board using Thonny:  
+ - [main.py](https://github.com/OpenDroneMap/RSCalibration/blob/main/main.py)
+
+```
+from machine import Pin, Timer
+led = Pin(25, Pin.OUT)
+timer = Timer()
+
+def blink(timer):
+    led.toggle()
+
+timer.init(freq=1000, mode=Timer.PERIODIC, callback=blink)
+```
+
+![image](https://user-images.githubusercontent.com/19295950/175456447-7df30e7e-4034-43b4-8cb1-95d51fa1c1a4.png)
+
+1. Plug in your RP2040-compatible board while hoading the Bootsel button. It will show up as a removeable-storage drive
+2. Set Thonny to use the MicroPython Interpreter under Options -> Interpreter
+3. Upload the latest MicroPython firmware to the RP2040-compatible board
+4. After the board reboots, open main.py with Thonny and save it to the RP2040-compatible board as main.py
+
+### Procedure
+
+1. Same data collection procedure as above
+
 ## Contribute to ODM
 
 You can use the form at https://opendronemap.github.io/RSCalibration/ to contribute to [ODM's database of rolling shutter readout times](https://github.com/OpenDroneMap/ODM/blob/master/opendm/rollingshutter.py).
+
