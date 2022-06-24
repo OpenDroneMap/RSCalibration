@@ -50,14 +50,14 @@ You can upload the following code to the Arduino board and change the `ledPin` v
  
 ### Schematics
 
-You will only need to connect your RP2040 board to your computer for programming using whatever cable/interface your board has (microUSB, Type-C,etc)
+You will only need to connect your RP2040 board to your computer for programming using whatever cable/interface your board has (microUSB, Type-C, etc)
 
 ### Code
 
 You can upload the following MicroPython code to the RP2040-compatible board using Thonny:  
  - [main.py](https://github.com/OpenDroneMap/RSCalibration/blob/main/main.py)
 
-```
+```python
 from machine import Pin, Timer
 led = Pin(25, Pin.OUT)
 timer = Timer()
@@ -82,4 +82,3 @@ timer.init(freq=1000, mode=Timer.PERIODIC, callback=blink)
 ## Contribute to ODM
 
 You can use the form at https://opendronemap.github.io/RSCalibration/ to contribute to [ODM's database of rolling shutter readout times](https://github.com/OpenDroneMap/ODM/blob/master/opendm/rollingshutter.py).
-
