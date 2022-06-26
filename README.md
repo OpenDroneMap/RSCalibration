@@ -36,7 +36,7 @@ You can upload the following code to the Arduino board and change the `ledPin` v
 
 1. Turn on the Arduino device
 2. Place the camera on a stable surface close to the LED
-3. Take a picture of the LED using the **fastest shutter speed setting available**
+3. Take a picture of the LED using the **fastest shutter speed setting available**. If your drone has a global leaf shutter as well as a CMOS rolling shutter (for example, DJI Phantom 4 Pro / Pro v2, SenseFly SODA, etc.), set your shutter speed to fastest available leaf shutter speed.
 4. Examine the picture and count the total number of lines (both dark and colored lines). For example, the picture below has ~25 lines and the estimated readout time is thus `25ms`:
 
 ![image](https://user-images.githubusercontent.com/1951843/174392533-429943a6-82b2-4948-9637-3cb35fd21707.png)
