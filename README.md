@@ -70,7 +70,7 @@ timer.init(freq=1000, mode=Timer.PERIODIC, callback=blink)
 
 ![image](https://user-images.githubusercontent.com/19295950/175456447-7df30e7e-4034-43b4-8cb1-95d51fa1c1a4.png)
 
-1. Plug in your RP2040-compatible board while hoading the Bootsel button. It will show up as a removeable-storage drive
+1. Plug in your RP2040-compatible board while holding the Bootsel button. It will show up as a removeable-storage drive
 2. Set Thonny to use the MicroPython Interpreter under Options -> Interpreter
 3. Upload the latest MicroPython firmware to the RP2040-compatible board
 4. After the board reboots, open main.py with Thonny and save it to the RP2040-compatible board as main.py
