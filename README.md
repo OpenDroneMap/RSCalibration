@@ -34,7 +34,7 @@ You can upload the following code to the Arduino board and change the `ledPin` v
 
 ## Procedure
 
-> **Warning**
+> **Warning**  
 > For cameras with non-Global Mechanical Shutters please try to force Electronic Shutter mode to ensure accurate readings.
 
 1. Turn on the Arduino device
